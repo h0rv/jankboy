@@ -1,0 +1,37 @@
+:root {
+  --main-font: Georgia, "Times New Roman", serif;
+  --secondary-font: system-ui, sans-serif;
+  --display-font: system-ui, sans-serif;
+  --line-length: 44rem;
+  --bg: light-dark(#faf8f2, #252522);
+  --fg: light-dark(#39382f, #ded9c9);
+  --muted-fg: light-dark(#69685c, #b5b0a1);
+  --accent: light-dark(#3d6345, #b0c88c);
+  --box-bg: light-dark(#f0eee5, #30312b);
+  --graphical-fg: light-dark(#d4d3c6, #505148);
+}
+
+html { font-size: 18px; line-height: 1.75; }
+body { padding-block: 3rem 5rem; }
+main { inline-size: min(calc(100% - 2.5rem), var(--line-length)); margin-inline: auto; padding: 0; }
+header { margin-block-end: 3rem; }
+h1, h2, h3 { font-weight: 650; letter-spacing: -.025em; text-wrap: balance; }
+h1 { font-size: clamp(2.5rem, 8vw, 3.4rem); line-height: 1.15; margin-block-end: .75rem; }
+h2 { margin-block: 3rem 1rem; font-size: 1.6rem; }
+h3 { margin-block: 2rem .75rem; font-size: 1.2rem; line-height: 1.35; }
+p, ul, ol { margin-block: 1rem; }
+li + li { margin-block-start: .5rem; }
+section, article, h3 { scroll-margin-top: 1.5rem; }
+nav { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-block: 1.5rem; font: .85rem/1.7 var(--secondary-font); }
+.subtitle { max-inline-size: 36rem; font-size: 1.15rem; color: var(--muted-fg); }
+.note, .checkpoint { border-inline-start: 3px solid var(--accent); padding-inline-start: 1rem; }
+.checkpoint { font: .9rem/1.7 var(--secondary-font); margin-block: 1.5rem; }
+article + article { border-block-start: 1px solid var(--graphical-fg); margin-block-start: 2.25rem; padding-block-start: .25rem; }
+code, kbd { font-size: .82em; overflow-wrap: anywhere; }
+pre { border: 1px solid var(--graphical-fg); padding: 1rem; background: var(--box-bg); }
+pre code { overflow-wrap: normal; }
+summary { font-family: var(--secondary-font); }
+a { text-underline-offset: .18em; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 500px) { html { font-size: 17px; } body { padding-block: 1.5rem 3rem; } }
+@media print { body { padding: 0; } nav { display: none; } article { break-inside: avoid; } }

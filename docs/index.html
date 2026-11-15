@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>jankboy: learn Clojure and Game Boy emulation</title>
+  <link rel="stylesheet" href="assets/missing-1.3.0.min.css">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>jankboy</h1>
+    <p class="subtitle">Build a Game Boy emulator while learning Clojure and how the machine works.</p>
+    <nav aria-label="On this page">
+      <a href="#why">Why</a>
+      <a href="#goal">V1</a>
+      <a href="#start">Start here</a>
+      <a href="#reading">Read first</a>
+      <a href="#session">Milestones</a>
+      <a href="#v2">Later</a>
+      <a href="#references">References</a>
+      <a href="#help">Getting help</a>
+    </nav>
+  </header>
+
+  <section id="why">
+    <h2>Why build this?</h2>
+    <p>I want to learn both Clojure and emulation by building something I want to use. This is not just a language exercise, and getting a game running is not the only measure of success.</p>
+    <ul>
+      <li>I want to write Lisp by hand and understand its simplicity. The REPL, immutable data, and function composition should become ordinary tools rather than unfamiliar ideas.</li>
+      <li>I want to understand computer science fundamentals that I rarely use in everyday software work. A Game Boy makes CPU registers, instruction decoding, bitwise operations, memory, graphics hardware, and timing concrete.</li>
+      <li>I want to model a machine as data and describe its behavior through functions. Choosing those representations is part of the work, not a decision for the agent to make for me.</li>
+      <li>I enjoy retro games, pixel art, and Metroidvanias. Understanding the hardware behind older games is interesting in its own right.</li>
+    </ul>
+    <p>Do not simplify away either subject. Learn ordinary Clojure idioms while working through the hardware behavior they represent.</p>
+  </section>
+
+  <section id="goal">
+    <h2>V1: one playable ROM</h2>
+    <p>Build a small but real original Game Boy (DMG) emulator in jank. Launch a complete program that loads a legally distributable homebrew ROM, renders its graphics, and accepts keyboard controls. Start with a window and a test pattern, then connect the emulated hardware in small steps.</p>
+    <p>Aim for 5 to 10 hours of focused effort. That is an ambitious budget, not a guarantee. Spend the time on the foundational behavior needed for one playable ROM rather than the long tail of hardware support.</p>
+    <p class="note">Use an 80/20 approach without faking the machine. Implement the hardware behavior the target needs according to the specification. Do not hardcode game logic, special instruction addresses, or expected frames to make the ROM appear to work.</p>
+    <h3>First game</h3>
+    <p>Play Game Boy Raw Snake, included at <a href="../roms/raw-snake/snake.gb"><code>roms/raw-snake/snake.gb</code></a>.</p>
+    <p>The playable check is starting from that ROM, passing the title screen, and playing in the window at a usable speed. The board, snake, food, and score should display correctly. You can turn with the keyboard, collect food, collide, and play again.</p>
+    <p>The learning check is being able to explain the major components and their interactions. I should have written meaningful Clojure myself, chosen the machine-state representation, and checked its behavior against independent references.</p>
+  </section>
+
+  <section id="start">
+    <h2>Start here</h2>
+    <p>Follow the <a href="../README.md">README</a> to install the tools. Open <code>src/jankboy/main.jank</code> and start a REPL with <code>mise run repl</code>. Use <code>mise tasks</code> to see the available commands.</p>
+    <p class="checkpoint">If the REPL is new to you, try <code>(+ 1 2)</code> and check that it returns <code>3</code>. Then define a small function yourself. Call it, change it, and call it again without restarting the REPL. Skip this warm-up if you can already do it.</p>
+    <h3>Keep the implementation small</h3>
+    <p>Prefer jank and raylib. Use ordinary, portable Clojure idioms where practical, but check jank's support rather than assuming a JVM library will work. Keep the existing tooling when it works.</p>
+    <p>Represent hardware state so you can inspect it in the REPL. Use functions to describe changes and compose smaller behaviors. Immutable snapshots can help you reason about a step, but do not force one representation everywhere or optimize before there is a reason.</p>
+    <p>Keep emulation separate from the host window, keyboard input, and execution controls. You should be able to inspect and test a CPU step without opening a window. Simple functions and data are enough to start; no framework or speculative architecture is needed.</p>
+  </section>
+
+  <section id="reading">
+    <h2>Read first</h2>
+    <p>This guide assumes you can read Scheme-style expressions, but does not assume you have written Clojure. Use these short readings alongside the milestones. Read enough to understand the next small task, then try it in the REPL. You do not need to finish whole books or pass a series of drills first.</p>
+    <h3>1. Clojure syntax and data</h3>
+    <p>Read <a href="https://clojure.org/guides/learn/syntax">Syntax</a>, <a href="https://clojure.org/guides/learn/functions">Functions</a>, <a href="https://clojure.org/guides/learn/sequential_colls">Sequential collections</a>, and <a href="https://clojure.org/guides/learn/hashed_colls">Hashed collections</a> in the Clojure learning guide.</p>
+    <p>Pay attention to vectors, maps, and keywords. These are ordinary tools for representing state in Clojure. Understand <code>defn</code>, <code>let</code>, and <code>fn</code>, how to look up a value in a map, and how <code>assoc</code> produces an updated map without changing the original. Unlike Scheme, only <code>nil</code> and <code>false</code> are false in a condition; an empty list is true.</p>
+    <p class="checkpoint">If immutable updates are unfamiliar, create a map with two values. Predict what updating one value with <code>assoc</code> will return. Check the returned map and the original in the REPL. Use this to explain how a function can produce a new machine state without changing a previous snapshot.</p>
+    <p>Leave macros, protocols, and advanced sequence processing for when you need them.</p>
+    <h3>2. The jank REPL and native interop</h3>
+    <p>Read the <a href="https://book.jank-lang.org/getting-started/04-hello-nrepl.html">jank REPL guide</a>. Then read the setup and source of the official <a href="https://github.com/jank-lang/commons/tree/main/raylib-sys/example">raylib example</a>, using the <a href="https://book.jank-lang.org/">jank book</a> to look up its C++ interop forms.</p>
+    <p>jank is a native Clojure dialect, not a JVM runtime. Use the Clojure guide for language fundamentals, but check jank's support before relying on a feature or library.</p>
+    <p class="checkpoint">Before writing graphics code, identify the forms in the example that create a window, draw a frame, and release resources. You do not need to understand every native type yet.</p>
+    <h3>3. The machine you are emulating</h3>
+    <p>Read the <a href="https://gbdev.io/pandocs/">Pan Docs</a> introduction, then its <a href="https://gbdev.io/pandocs/Memory_Map.html">Memory map</a> and <a href="https://gbdev.io/pandocs/CPU_Registers_and_Flags.html">CPU registers and flags</a> sections. Learn what a byte and a 16-bit address represent, how hexadecimal notation works, and why some memory addresses refer to hardware registers rather than RAM.</p>
+    <p>Before writing CPU code, be able to explain what the program counter points to and how an instruction changes CPU state. Before writing graphics code, distinguish the host window from the emulated LCD. Read the detailed hardware rules as you reach each milestone.</p>
+  </section>
+
+  <section id="session">
+    <h2>V1 milestones</h2>
+    <p>Work in sessions of about two to three hours within the 5 to 10 hour target. Get something visual running early. These are observable steps toward the game, not a promise that every step takes the same amount of time.</p>
+    <p>For each milestone, predict a small result, write the relevant behavior, and check it. Keep useful checks as tests you can rerun. If you get stuck on setup or an obscure compatibility issue, ask for help rather than spending the session on it.</p>
+    <article aria-labelledby="window">
+    <h3 id="window">1. Put pixels in a window</h3>
+    <p>The Game Boy screen is 160 × 144 pixels with four shades. raylib provides the host window and keyboard events. Your emulator computes the pixels to display.</p>
+    <p>Start with the official <a href="https://github.com/jank-lang/commons/tree/main/raylib-sys">jank raylib example</a>. Open and close its window before adapting it.</p>
+    <ol>
+      <li>Open and close a blank window.</li>
+      <li>Draw a fixed pattern using the four shades.</li>
+      <li>Change the pattern with one key.</li>
+    </ol>
+    <p>At first, you are drawing your own pattern, not emulating video hardware. What would you change to display the same 160 × 144 image at twice the size?</p>
+    <p class="checkpoint">Done when you can display all four shades at an integer scale, change the pattern with a key, and close the window cleanly.</p>
+    </article>
+    <article aria-labelledby="instructions">
+    <h3 id="instructions">2. Execute and test instructions</h3>
+    <p>The SM83 is the Game Boy's CPU. Its registers hold working values, and its program counter holds the address of the next instruction. Read Pan Docs' <a href="https://gbdev.io/pandocs/CPU_Instruction_Set.html">instruction-set overview</a> and follow its links to instruction semantics. Use the <a href="https://clojure.org/guides/learn/flow">Clojure flow control guide</a> when you need branching or loops.</p>
+    <p>Before decoding instructions, practise byte-sized arithmetic in the REPL. Check wraparound, little-endian byte order, and signed relative offsets against the specification. In little-endian order, the low byte of a multi-byte value comes first. Record whether your timing counts use clock ticks (T-cycles) or machine cycles (M-cycles) before comparing them with a reference.</p>
+    <p>Choose one instruction. Write down its starting state and expected ending state before implementing it. Check your result manually, then write one state comparison you can rerun. Expand to decoding, flags, stack operations, and cycle counts as the target needs them. You do not need a complete opcode table before moving on to memory or graphics.</p>
+    <p>Use <a href="https://github.com/SingleStepTests/sm83">SM83 single-step tests</a> as an independent check. Their flat 64 KB memory model is not the Game Boy memory map. Keep these tests alongside later graphical checks.</p>
+    <p class="checkpoint">Done when you can fetch and execute a short instruction sequence, explain its state changes and cycle counts, and reproduce the results in independent tests. Extend instruction coverage as you work through the later milestones.</p>
+    </article>
+    <article aria-labelledby="memory">
+    <h3 id="memory">3. Load a ROM into mapped memory</h3>
+    <p>Read Pan Docs' cartridge header, memory map, and power-up sequence sections before choosing the loader's checks and initial machine state.</p>
+    <p>Read and validate the cartridge header. Support ROM-only cartridges first and report unsupported types clearly. Map ROM, work RAM, video RAM, sprite memory (OAM), and hardware registers according to Pan Docs. Start from a documented DMG post-boot state without distributing a boot ROM. The CPU reads instructions and data through this memory map.</p>
+    <p class="checkpoint">Done when the header identifies the target cartridge, ROM reads return the file's bytes, RAM writes can be read back, and unsupported cartridge types produce a clear error.</p>
+    </article>
+    <article aria-labelledby="graphics">
+    <h3 id="graphics">4. Render emulated graphics</h3>
+    <p>Read Pan Docs' tile data, background maps, OAM, and LCD control and palette register sections.</p>
+    <p>Replace the test pattern with pixels computed from emulated video memory and LCD registers. Tile data describes pixel shades; tile maps select which tiles appear on the background. OAM describes sprite positions and attributes.</p>
+    <p>Implement backgrounds and palettes, then the sprite behavior needed by the target. Follow the hardware rules for each feature you support, but defer unused modes and accuracy edge cases. Check small examples before comparing the game's title screen.</p>
+    <p class="checkpoint">Done when small video-memory examples produce the expected shades and positions, palette changes affect the image, and backgrounds and sprites combine correctly for the target.</p>
+    </article>
+    <article aria-labelledby="timing">
+    <h3 id="timing">5. Connect timing and controls</h3>
+    <p>Read Pan Docs' rendering, timer and divider registers, interrupts, and joypad input sections. Check the specified timing and button bit values rather than guessing from what appears to work.</p>
+    <p>Advance the LCD and divider from CPU cycles. Implement the scanline, VBlank, and interrupt behavior the target relies on. Use documented timing, but leave cycle-perfect accuracy and unused access quirks for V2. Map arrows to the D-pad, Z/X to A/B, Enter to Start, and Backspace to Select through the emulated joypad register and its interrupt behavior. Keep host frame pacing separate from emulated timing.</p>
+    <p>Test interrupt servicing as well as interrupt requests. Check that a pending enabled interrupt saves the return address, enters the correct vector, and can return to the interrupted code. The LCD and divider must keep advancing while the CPU is halted.</p>
+    <p class="checkpoint">Done when a known number of CPU cycles produces the expected LCD and divider state, button presses and releases produce the specified joypad values, and the CPU services interrupts and resumes execution.</p>
+    </article>
+    <article aria-labelledby="play">
+    <h3 id="play">6. Play the target ROM</h3>
+    <p>Integrate these pieces and fill hardware gaps using Pan Docs and focused tests. Compare the title screen and gameplay with a trusted emulator. Check the success criteria above, including repeated turns and restarting after a collision. Implement hardware rules rather than special cases for the game's code or instruction addresses.</p>
+    <p>If an obscure detail threatens the time budget, decide with the agent whether to explain it, delegate a narrow fix, or defer it. Preserve your understanding of the CPU, memory, and graphics relationship. You do not need to handwrite every repetitive detail to earn a playable result.</p>
+    <p class="checkpoint">Done when you can pass the title screen, steer the snake, collect food, see the score change, and play again after a collision without graphical corruption or missed controls.</p>
+    </article>
+  </section>
+
+  <section id="v2">
+    <h2>V2 and optional experiments</h2>
+    <p>After V1, choose improvements based on what you want to understand or play next. These are possibilities, not required follow-up work.</p>
+    <ul>
+      <li>Add audio or save states.</li>
+      <li>Support more cartridge types and a wider range of games.</li>
+      <li>Improve timing accuracy and hardware edge cases using focused test ROMs.</li>
+      <li>Measure performance before changing data representations or optimizing hot paths.</li>
+    </ul>
+  </section>
+
+  <section id="references">
+    <h2>References</h2>
+    <h3>Learning jank and Clojure</h3>
+    <ul>
+      <li><a href="https://book.jank-lang.org/">The jank book</a> covers the language and its tools.</li>
+      <li><a href="https://github.com/jank-lang/commons/tree/main/raylib-sys">Official jank raylib package and example</a> cover the window setup.</li>
+      <li><a href="https://mise.jdx.dev/">mise documentation</a> covers project tasks and tool selection.</li>
+      <li><a href="https://book.jank-lang.org/getting-started/04-hello-nrepl.html">The jank REPL guide</a> explains interactive development and editor connections.</li>
+      <li><a href="https://clojure.org/guides/learn/clojure">Learn Clojure</a> covers expressions, functions, and data structures.</li>
+    </ul>
+    <h3>Understanding the Game Boy</h3>
+    <ul>
+      <li><a href="https://gbdev.io/pandocs/">Pan Docs</a> is the main hardware reference for the CPU, memory map, graphics, timers, and joypad.</li>
+      <li><a href="https://github.com/SingleStepTests/sm83">SM83 single-step tests</a> provide instruction inputs and expected CPU states.</li>
+    </ul>
+    <p>For implementation help after your own attempt, compare a small relevant part of a working emulator rather than copying its architecture. The <a href="https://ihavenocluewhatimdoing.com/post.html?id=gameboy-emulator-clojure-memory">Clojure Game Boy emulator write-up</a> discusses memory modeling, and <a href="https://github.com/LIJI32/SameBoy">SameBoy</a> is a mature implementation to consult for difficult behavior. Neither replaces the hardware specification.</p>
+  </section>
+
+  <section id="help">
+    <h2>Getting help</h2>
+    <p>The agent is a knowledgeable tutor and a pragmatic pair programmer. You personally model the machine state and implement the interesting parts of instruction interpretation, memory behavior, and the CPU's relationship with graphics.</p>
+    <p>Ask when you cannot predict the next small result, cannot find a hardware rule, or get a result that differs from your prediction. Share your attempt, expected result, and actual result. Start with a hint or explanation, then ask for stronger guidance if you need it. The point is understanding and progress, not completing tedious exercises.</p>
+    <p>With your permission, the agent can handle tooling, boilerplate, repetitive implementation, or obscure compatibility work that adds little to the lesson. Agree on that boundary first, review what changed, and keep meaningful Clojure and emulation decisions in your hands. The agent must not simply generate a working emulator for you.</p>
+    <p>The full ground rules are in <a href="../AGENTS.md">AGENTS.md</a>.</p>
+  </section>
+</main>
+</body>
+</html>

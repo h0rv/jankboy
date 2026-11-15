@@ -1,0 +1,45 @@
+[tools]
+java = "temurin-21.0.12+101.0.LTS"
+leiningen = "2.13.1"
+"github:weavejester/cljfmt" = "0.16.6"
+"clj-kondo" = "2026.10.26"
+
+[tools."http:jank"]
+version = "0.1-1"
+strip_components = 0
+bin_path = "jank_{{ version }}_aarch64/usr/local/bin"
+
+[tools."http:jank".platforms.macos-arm64]
+url = "https://cache.jank-lang.org/jank_{{ version }}_aarch64.tar.gz"
+checksum = "sha256:d25af5466acebcce5ed323c6f46d785f1f55e6bf818cad9f5ff783f5260958dc"
+
+[env]
+# Keep native compiler caches separate from other jank installations.
+XDG_CACHE_HOME = "{{config_root}}/.cache"
+
+[hooks]
+postinstall = "lein deps"
+
+[tasks.repl]
+description = "Open the project jank REPL"
+run = "lein repl"
+
+[tasks.run]
+description = "Run the project with jank"
+run = "lein run"
+
+[tasks.build]
+description = "Build the project as a native executable"
+run = "lein compile"
+
+[tasks.fmt]
+description = "Format the project"
+run = "cljfmt fix"
+
+[tasks.lint]
+description = "Check for common Clojure mistakes"
+run = "find src -name '*.jank' -exec clj-kondo --lang clj --lint project.clj {} +"
+
+[tasks.docs]
+description = "Open the project brief"
+run = "open docs/index.html"

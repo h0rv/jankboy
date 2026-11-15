@@ -1,0 +1,21 @@
+# Local build output and caches
+/target/
+/.cache/
+/.cpcache/
+/.clj-kondo/.cache/
+/.nrepl-port
+/.jank-repl-history
+/.lein-*
+.DS_Store
+
+# Keep ROMs, BIOS dumps, and binary assets out of git by default.
+*.gb
+*.gbc
+*.rom
+*.bin
+*.sav
+*.o
+*.dylib
+
+# Approved homebrew, distributed with its license.
+!/roms/raw-snake/snake.gb

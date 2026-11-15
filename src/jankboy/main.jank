@@ -1,0 +1,5 @@
+(ns jankboy.main)
+
+;; This only checks the project setup. The emulator is yours to write.
+(defn -main [& _args]
+  (println "jankboy is ready. No emulator code yet."))
