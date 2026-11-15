@@ -10,9 +10,9 @@ Install the tools with [mise](https://mise.jdx.dev/):
 
 ```sh
 mise install
-mise run repl   # Start here.
-mise tasks      # Discover available tasks.
+mise run run
 ```
 
-Write your code in `src/jankboy/main.jank`.
-Follow the [learning guide](docs/index.html) for the milestones, completion criteria, and hardware references.
+Edit `src/jankboy/main.jank`, save, and run `mise run run` in another terminal. Repeat after each change.
+
+Follow the [learning guide](docs/index.html) to start building.

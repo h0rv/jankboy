@@ -22,7 +22,7 @@ postinstall = "lein deps"
 
 [tasks.repl]
 description = "Open the project jank REPL"
-run = "lein repl"
+run = "lein with-profile +repl repl"
 
 [tasks.run]
 description = "Run the project with jank"

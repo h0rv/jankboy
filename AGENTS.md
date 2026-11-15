@@ -42,7 +42,7 @@ V1 is a small but real, playable emulator. Launch a complete program, load one l
 
 Target roughly **5 to 10 hours of focused effort**. This is ambitious, not guaranteed. Work in sessions of roughly two to three hours, each with a small result the human can explain. Use an 80/20 approach: implement the foundational behavior needed for one playable ROM properly, and avoid the long tail of compatibility. Instruction tests and a ROM parser are intermediate milestones, not the finished goal.
 
-1. Keep the existing REPL and setup. Get a scaled 160 × 144 test pattern into a jank + raylib window early, before completing the CPU.
+1. Keep the existing setup. Get a scaled 160 × 144 test pattern into a jank + raylib window early, before completing the CPU.
 2. Build understandable SM83 state transitions and independent instruction tests. Extend instruction coverage as the target needs it rather than requiring a complete opcode table before other milestones.
 3. Load a ROM-only cartridge through a header parser and the DMG memory map.
 4. Render background tiles and sprites from emulated video memory and LCD registers.
@@ -100,4 +100,4 @@ If a spec or library API is unclear, look up the current authoritative source ra
 
 ## Suggested first interaction
 
-Inspect the current work first. If the REPL already works, ask: "Want to get a test pattern into a raylib window, or work on the next emulation milestone?" Follow the user's choice, one concept at a time.
+Inspect the current work first. Default to editing and saving `src/jankboy/main.jank`, then running `mise run run` in another terminal. The REPL is optional. Do not add automatic REPL jobs, evaluation keymaps, or panels. Help with the next learning milestone rather than asking the human to configure tools.

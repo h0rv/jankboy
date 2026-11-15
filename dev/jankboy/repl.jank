@@ -1,0 +1,32 @@
+(ns jankboy.repl
+  (:require [clojure.string :as str]
+            [jankboy.main :refer [-main]]))
+
+;; Small local helpers; this jank release does not ship clojure.repl.
+(defn print-doc [sym]
+  (let [m (meta (resolve sym))]
+    (println sym)
+    (when-let [args (:arglists m)] (prn args))
+    (println (or (:doc m) "No docstring available."))))
+
+(defmacro doc
+  "Print a var's arguments and docstring. Usage: (doc map)."
+  [sym]
+  `(print-doc '~sym))
+
+(defmacro dir
+  "Print the public names in a loaded namespace. Usage: (dir clojure.core)."
+  [ns-name]
+  `(doseq [name# (sort (keys (ns-publics '~ns-name)))]
+     (println name#)))
+
+(defn apropos
+  "Find public names containing text in loaded namespaces. Usage: (apropos \"map\")."
+  [text]
+  (sort
+   (for [n (all-ns)
+         s (keys (ns-publics n))
+         :when (str/includes? (str s) text)]
+     (symbol (str (ns-name n)) (str s)))))
+
+(println "REPL helpers: (doc map)  (dir clojure.core)  (apropos \"map\")")

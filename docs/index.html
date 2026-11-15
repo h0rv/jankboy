@@ -50,8 +50,9 @@
 
   <section id="start">
     <h2>Start here</h2>
-    <p>Follow the <a href="../README.md">README</a> to install the tools. Open <code>src/jankboy/main.jank</code> and start a REPL with <code>mise run repl</code>. Use <code>mise tasks</code> to see the available commands.</p>
-    <p class="checkpoint">If the REPL is new to you, try <code>(+ 1 2)</code> and check that it returns <code>3</code>. Then define a small function yourself. Call it, change it, and call it again without restarting the REPL. Skip this warm-up if you can already do it.</p>
+    <p>Follow the <a href="../README.md">README</a> to install the tools. Edit <code>src/jankboy/main.jank</code> in your editor and save it. In another terminal, run <code>mise run run</code>. Save and run again after each change.</p>
+    <p class="checkpoint">Change the message printed by <code>-main</code>, save the file, and run it again. Check that you see your new message.</p>
+    <p>When you want to try expressions interactively, <code>mise run repl</code> opens a REPL. It is optional; you do not need editor integration.</p>
     <h3>Keep the implementation small</h3>
     <p>Prefer jank and raylib. Use ordinary, portable Clojure idioms where practical, but check jank's support rather than assuming a JVM library will work. Keep the existing tooling when it works.</p>
     <p>Represent hardware state so you can inspect it in the REPL. Use functions to describe changes and compose smaller behaviors. Immutable snapshots can help you reason about a step, but do not force one representation everywhere or optimize before there is a reason.</p>
@@ -67,7 +68,7 @@
     <p class="checkpoint">If immutable updates are unfamiliar, create a map with two values. Predict what updating one value with <code>assoc</code> will return. Check the returned map and the original in the REPL. Use this to explain how a function can produce a new machine state without changing a previous snapshot.</p>
     <p>Leave macros, protocols, and advanced sequence processing for when you need them.</p>
     <h3>2. The jank REPL and native interop</h3>
-    <p>Read the <a href="https://book.jank-lang.org/getting-started/04-hello-nrepl.html">jank REPL guide</a>. Then read the setup and source of the official <a href="https://github.com/jank-lang/commons/tree/main/raylib-sys/example">raylib example</a>, using the <a href="https://book.jank-lang.org/">jank book</a> to look up its C++ interop forms.</p>
+    <p>Use the <a href="https://book.jank-lang.org/getting-started/04-hello-nrepl.html">jank REPL guide</a> when you want to try expressions interactively. For graphics, read the official <a href="https://github.com/jank-lang/commons/tree/main/raylib-sys/example">raylib example</a> and look up its C++ interop forms in the <a href="https://book.jank-lang.org/">jank book</a>.</p>
     <p>jank is a native Clojure dialect, not a JVM runtime. Use the Clojure guide for language fundamentals, but check jank's support before relying on a feature or library.</p>
     <p class="checkpoint">Before writing graphics code, identify the forms in the example that create a window, draw a frame, and release resources. You do not need to understand every native type yet.</p>
     <h3>3. The machine you are emulating</h3>
